@@ -35,4 +35,7 @@ runs:
 
     - name: SCons Build
       shell: sh
-      run: scons --directory=./godot-cpp/test "gdextension_dir=${{ github.workspace }}" ${{ inputs.scons-flags }}
+      run: |
+        mv ./godot-cpp /tmp/godot-cpp
+        ln -sfn "${{ github.workspace }}" /tmp/gdextension
+        scons --directory=/tmp/godot-cpp/test "gdextension_dir=/tmp/gdextension" ${{ inputs.scons-flags }}
