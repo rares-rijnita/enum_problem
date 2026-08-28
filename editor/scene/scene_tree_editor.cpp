@@ -1586,7 +1586,8 @@ void SceneTreeEditor::set_selected(Node *p_node, bool p_emit_selected) {
 	}
 	selected = p_node;
 
-	TreeItem *item = p_node ? _find(tree->get_root(), _get_node_path((p_node))) : nullptr;
+	// Only look the node up in the tree when there is an edited scene it can belong to.
+	TreeItem *item = (p_node && get_scene_node()) ? _find(tree->get_root(), _get_node_path(p_node)) : nullptr;
 	if (item) {
 		if (auto_expand_selected) {
 			// Make visible when it's collapsed.
@@ -2037,7 +2038,11 @@ bool SceneTreeEditor::_is_script_type(const StringName &p_type) const {
 }
 
 NodePath SceneTreeEditor::_get_node_path(Node *p_node) const {
-	return get_scene_node()->get_path_to(p_node);
+	Node *scene_node = get_scene_node();
+	if (!scene_node) {
+		return NodePath();
+	}
+	return scene_node->get_path_to(p_node);
 }
 
 Node *SceneTreeEditor::_get_node(const NodePath &p_path) const {
